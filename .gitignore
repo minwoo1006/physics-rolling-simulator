@@ -1,0 +1,12 @@
+# Physics Papers
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+GEMINI.md
