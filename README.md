@@ -1,50 +1,64 @@
-# Physics Simulation: Rolling and Sliding down an Inclined Plane
+# Rolling and Sliding down an Inclined Plane: Simulation & Verification
 
-This project is an interactive physics simulation based on the paper **"Rolling and Sliding down an Inclined Plane" by Rod Cross (The Physics Teacher, 2023)**.
+This project implements a Python-based simulation to reproduce and verify the experimental findings from the paper **"Rolling and Sliding down an Inclined Plane"**. It focuses on the motion of a ball on an incline, accounting for both sliding and rolling behaviors.
 
-The simulation models the motion of a ball (rolling and sliding) as it moves down an incline, with a specific focus on the **offset distance ($D$)** of the normal reaction force and its impact on linear and angular accelerations.
+## 1. Introduction
+While standard physics textbooks often assume that the normal force acts through the center of a rolling object, real-world conditions involve a small offset distance (D) due to surface deformation or friction. This project simulates how this offset D affects the ball's linear acceleration and angular velocity.
 
-## 🚀 Key Features
+## 2. Physical Model
 
-- **Interactive 3D Dashboard**: Built with VPython, allowing users to observe the ball's motion in a 3D environment with full camera controls (rotate/zoom).
-- **Real-time Parameter Tuning**: Interactive sliders to adjust the incline angle ($\theta$), kinetic friction coefficient ($\mu_k$), and the normal force offset ratio ($D/R$) on the fly.
-- **Live Graphing**: Real-time plots of linear velocity ($v$), angular velocity ($R\omega$), and the ratio ($v/R\omega$) to analyze the transition between sliding and pure rolling.
-- **Automated Validation**: Includes a validation script to compare simulation results with the experimental data (Table I) provided in the original paper.
+### Key Equations
+Let R be the radius, M the mass, theta the incline angle, and mu the friction coefficient.
 
-## 📚 Physics Background
+1.  **Sliding State (v > R * omega)**:
+    - Linear Acceleration: a = g * (sin(theta) - mu_k * cos(theta))
+    - Angular Acceleration: alpha = (5/2) * (mu_k - D/R) * g * cos(theta) / R
 
-The simulation strictly follows the mathematical model described in the paper:
+2.  **Rolling State (v = R * omega)**:
+    - Linear Acceleration: a = (5/7) * g * (sin(theta) - (D/R) * cos(theta))
+    - Angular Acceleration: alpha = a / R
 
-- **Rolling Acceleration**: $a = \frac{5}{7}g(\sin\theta - \frac{D}{R}\cos\theta)$
-- **Sliding Acceleration**: $a = g(\sin\theta - \mu_k\cos\theta)$
-- **Angular Acceleration**: $\frac{d\omega}{dt} = \frac{5}{2}(\mu_k - \frac{D}{R})\frac{g\cos\theta}{R}$
+### Transition Condition
+Sliding occurs if the required friction ratio exceeds the static friction coefficient (mu_s):
+- Condition: (2/7) * tan(theta) + (5/7) * (D/R) > mu_s
 
-Notably, the simulation captures the **backward spin phenomenon** that occurs when $\mu_k < D/R$, where the ball rotates backwards while sliding down the incline.
+## 3. Implementation Details
+- **Language**: Python 3.13+
+- **Physics Engine**: Numerical calculation using the derived physics formulas within a time-stepping loop.
+- **Visualization**: 3D simulation and real-time graphing using the `vpython` library.
+- **Interactive UI**: A dashboard allowing users to adjust theta, mu, and the D/R ratio in real-time.
 
-## 🛠 Installation & Usage
+## 4. Verification Results
+The table below compares the experimental values (Exp) from Table I of the paper with the results calculated by our simulation (Sim).
+
+| Case Name | Sim a (m/s^2) | Exp a (m/s^2) | Error a (%) | Sim alpha (rad/s^2) | Exp alpha (rad/s^2) | Error alpha (%) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Billiard Smooth (Slide) | 6.08 | 6.05 | **0.5%** | 114.2 | 116.7 | **2.2%** |
+| Rubber Smooth (Roll) | 5.08 | 5.07 | **0.2%** | 161.3 | 164.2 | **1.8%** |
+| Billiard Rough (Roll) | 5.00 | 4.99 | **0.2%** | 196.9 | 199.2 | **1.2%** |
+| Rubber Rough (Roll) | 4.88 | 4.88 | **0.1%** | 155.0 | 162.6 | **4.7%** |
+
+*The results show high accuracy, confirming that the model including the offset D/R accurately describes real-world dynamics.*
+
+## 5. Instructions
 
 ### Prerequisites
-Python 3.13+ is required. Install the necessary libraries using pip:
+Install the required libraries:
 ```bash
-pip install vpython numpy matplotlib
+pip install numpy vpython
 ```
 
 ### Running the Simulation
-Launch the interactive 3D dashboard:
+Execute the main script to see the 3D visualization:
 ```bash
-python simulation.py
+python3 simulation.py
 ```
 
-### Running the Validation
-Verify the physics engine against the paper's experimental data:
+### Running the Verification
+Execute the verification script to see the data comparison:
 ```bash
-python verify_results.py
+python3 verify_results.py
 ```
 
-## ✅ Validation Results
-The `verify_results.py` script confirms high accuracy compared to the paper's Table I data:
-- **Linear Acceleration ($a$)**: Error < 0.5%
-- **Angular Acceleration ($\alpha$)**: Error < 5.0%
-
-## 📄 License and Reference
-This project is for educational and research purposes. For detailed theoretical background, please refer to the included paper: `4. Rolling and Sliding down an Inclined Plane.pdf`.
+## 6. Conclusion
+The simulation successfully demonstrates that the normal force offset (D) is a critical factor in determining both the transition from sliding to rolling and the overall acceleration of the object. This model provides a more realistic representation than simplified textbook examples.
